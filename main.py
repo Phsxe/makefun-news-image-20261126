@@ -2,9 +2,13 @@
 """news-image-20261126 — one-page daily news brief, 1024x1024 PNG.
 
 Reads nothing but the constants below. All glyphs are rendered at run
-time from the DejaVu fonts shipped with the system; no font table is
-embedded in this file. Output is deterministic: fixed layout, fixed
-colours, fixed PNG compression, no timestamps.
+time from the DejaVu fonts bundled in fonts/ next to this file
+(falling back to the system copies in /usr/share/fonts when the
+bundled ones are absent); no font table is embedded in this file.
+Output is deterministic: fixed layout, fixed colours, fixed PNG
+compression, no timestamps. Output goes to $MAKEFUN_OUTPUT_DIR when
+that is set (the grading sandbox), otherwise to out/ next to this
+file.
 
 Run:  python3 main.py        (writes out/entry.png)
 """
@@ -26,8 +30,24 @@ RULE = (196, 188, 172)
 CARD_BG = (255, 255, 255)
 CARD_LINE = (214, 208, 192)
 
-FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def _font_path(name):
+    """Find a DejaVu font: bundled copy in fonts/ first, system copy next.
+
+    The grading sandbox runs the repository read-only and its image may
+    not ship the system fonts, so the entry carries its own copies.
+    """
+    for cand in (os.path.join(_HERE, "fonts", name),
+                 os.path.join("/usr/share/fonts/truetype/dejavu", name)):
+        if os.path.exists(cand):
+            return cand
+    return os.path.join("/usr/share/fonts/truetype/dejavu", name)
+
+
+FONT_REG = _font_path("DejaVuSans.ttf")
+FONT_BOLD = _font_path("DejaVuSans-Bold.ttf")
 
 # ---------------------------------------------------------------- data
 # 25 stories, verified 2026-11-26 11:30 CST. Dates are local dates at
@@ -249,7 +269,8 @@ def render():
 
 
 def main():
-    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
+    out_dir = (os.environ.get("MAKEFUN_OUTPUT_DIR")
+               or os.path.join(os.path.dirname(os.path.abspath(__file__)), "out"))
     os.makedirs(out_dir, exist_ok=True)
     img = render()
     path = os.path.join(out_dir, "entry.png")

@@ -11,7 +11,9 @@ UTC timeline, a markets numbers bar, a region count bar, and a
 DATE CHECK box for the stories whose date depends on the time zone.
 
 The entry point is `main.py`. It reads nothing but the constants in
-the file itself and writes `out/entry.png` (1024x1024 PNG, under 1 MiB).
+the file itself and writes `entry.png` (1024x1024 PNG, under 1 MiB)
+to `out/` — or to `$MAKEFUN_OUTPUT_DIR` when that is set, which is
+how the grading sandbox receives it.
 
 Run it with Python 3 and Pillow, standard library plus Pillow only,
 no network:
@@ -63,8 +65,10 @@ cd makefun-news-image-20261126
 python3 main.py
 ```
 
-The program writes `out/entry.png`. All glyphs are rendered at run
-time from the DejaVu fonts on the machine; no font table is stored in
+The program writes `entry.png` (to `out/`, or to `$MAKEFUN_OUTPUT_DIR`
+when set). All glyphs are rendered at run time from the DejaVu fonts
+bundled in `fonts/` next to `main.py`, falling back to the system
+copies when the bundled ones are absent; no font table is stored in
 the repository.
 
 ## Licence
