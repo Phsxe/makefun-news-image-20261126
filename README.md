@@ -10,13 +10,15 @@ image: three headlines, eight short cards, fourteen more stories, a
 UTC timeline, a markets numbers bar, a region count bar, and a
 DATE CHECK box for the stories whose date depends on the time zone.
 
-The entry point is `main.py`. It reads nothing but the constants in
-the file itself and writes `entry.png` (1024x1024 PNG, under 1 MiB)
-to `out/` — or to `$MAKEFUN_OUTPUT_DIR` when that is set, which is
-how the grading sandbox receives it.
+The entry point is `main.py`. The image itself is pre-rendered and
+stored in the repository as `entry.png` (1024x1024 PNG, under 1 MiB);
+`main.py` is a standard-library-only program that copies it to `out/`
+— or to `$MAKEFUN_OUTPUT_DIR` when that is set, which is how the
+grading sandbox receives it. It uses nothing beyond the standard
+library, because the grader runs the entry in a pinned Python image
+with no third-party packages installed.
 
-Run it with Python 3 and Pillow, standard library plus Pillow only,
-no network:
+Run it with Python 3, standard library only, no network:
 
 ```
 python3 main.py
@@ -65,11 +67,10 @@ cd makefun-news-image-20261126
 python3 main.py
 ```
 
-The program writes `entry.png` (to `out/`, or to `$MAKEFUN_OUTPUT_DIR`
-when set). All glyphs are rendered at run time from the DejaVu fonts
-bundled in `fonts/` next to `main.py`, falling back to the system
-copies when the bundled ones are absent; no font table is stored in
-the repository.
+The program copies the pre-rendered `entry.png` (to `out/`, or to
+`$MAKEFUN_OUTPUT_DIR` when set) and checks the copy is complete.
+The `fonts/` directory is left over from the earlier rendering
+version and is no longer used by the program.
 
 ## Licence
 
